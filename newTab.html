@@ -66,6 +66,33 @@
     </div>
   </div>
 
+  <!-- Gratitude Button -->
+  <button id="gratitude-button" class="gratitude-btn">Gratitude</button>
+
+  <!-- Gratitude Entry Modal -->
+  <div id="gratitude-modal" class="hidden modal-overlay">
+    <div class="modal-content">
+      <h2>Daily Gratitude Log</h2>
+      <textarea id="gratitude-input" placeholder="I'm grateful for..."></textarea>
+      <div class="modal-buttons">
+        <button id="gratitude-save">Save</button>
+        <button id="gratitude-view">View Past Entries</button>
+        <button id="gratitude-close">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Gratitude Log Viewer Modal -->
+  <div id="gratitude-log-modal" class="hidden modal-overlay">
+    <div class="modal-content">
+      <h2>Past Gratitude Entries</h2>
+      <div id="gratitude-log"></div>
+      <div class="modal-buttons">
+        <button id="gratitude-log-close">Close</button>
+      </div>
+    </div>
+  </div>
+
   <script src="scripts/Sortable.min.js"></script>
   <script src="newTab.js"></script>
 </body>

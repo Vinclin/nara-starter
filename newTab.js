@@ -49,7 +49,117 @@ document.addEventListener("DOMContentLoaded", () => {
   // show the overlay as soon as the page loads
   showQuoteOverlay();
 
-  
+
+  // -------- Daily Gratitude Log Functionality --------
+  // Open the gratitude entry modal when the gratitude button is clicked
+  const gratitudeButton = document.getElementById("gratitude-button");
+  const gratitudeModal = document.getElementById("gratitude-modal");
+  const gratitudeInput = document.getElementById("gratitude-input");
+  const gratitudeSave = document.getElementById("gratitude-save");
+  const gratitudeClose = document.getElementById("gratitude-close");
+  const gratitudeView = document.getElementById("gratitude-view");
+
+  const gratitudeLogModal = document.getElementById("gratitude-log-modal");
+  const gratitudeLogClose = document.getElementById("gratitude-log-close");
+  const gratitudeLogContainer = document.getElementById("gratitude-log");
+  document.querySelector("#gratitude-view")?.click();   // should open the log
+  document.querySelector("#gratitude-save")?.click();   // should show alert if textarea not empty
+
+  // When the gratitude button is clicked, show the entry modal
+  gratitudeButton.addEventListener("click", () => {
+    gratitudeModal.classList.remove("hidden");
+  });
+
+  // Close the gratitude entry modal
+  gratitudeClose.addEventListener("click", () => {
+    gratitudeModal.classList.add("hidden");
+  });
+
+  // Save the gratitude entry on click
+  // Save the gratitude entry and immediately refresh the log view if it’s open
+  gratitudeSave.addEventListener("click", () => {
+    const entryText = gratitudeInput.value.trim();
+    if (!entryText) {
+      alert("Please enter something first ✨");
+      return;
+    }
+
+    const now = new Date();
+    const dateStr = now.toLocaleDateString();
+    const timeStr = now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+
+    chrome.storage.local.get("gratitudeLog", ({ gratitudeLog = [] }) => {
+      // append new entry (do NOT overwrite)
+      gratitudeLog.push({ text: entryText, date: dateStr, time: timeStr });
+
+      chrome.storage.local.set({ gratitudeLog }, () => {
+        if (chrome.runtime.lastError) {
+          console.error("Storage set error:", chrome.runtime.lastError);
+          alert("Couldn’t save – storage error.");
+          return;
+        }
+        // clear textbox so user can add another
+        gratitudeInput.value = "";
+        // If the log modal is currently visible, reload its contents
+        if (!gratitudeLogModal.classList.contains("hidden")) {
+          loadGratitudeLog();
+        }
+        alert("Gratitude entry saved!");
+      });
+    });
+  });
+
+  // View past entries
+  gratitudeView.addEventListener("click", () => {
+    // Hide the entry modal and show the log modal
+    gratitudeModal.classList.add("hidden");
+    gratitudeLogModal.classList.remove("hidden");   // reveal overlay
+    loadGratitudeLog();                     // paint list
+  });
+
+  // Close the log viewer modal
+  gratitudeLogClose.addEventListener("click", () => {
+    gratitudeLogModal.classList.add("hidden");
+  });
+
+  // Function to load and render the gratitude log entries
+  function loadGratitudeLog() {
+    chrome.storage.local.get("gratitudeLog", (data) => {
+      const log = data.gratitudeLog || [];
+      // Clear the container first
+      gratitudeLogContainer.innerHTML = "";
+      if (log.length === 0) {
+        gratitudeLogContainer.textContent = "No entries yet.";
+        return;
+      }
+      // Render each entry as an item (most recent last)
+      gratitudeLogContainer.innerHTML = "";
+      if (!log.length) {
+        gratitudeLogContainer.textContent = "No entries yet.";
+        return;
+      }
+
+      // newest first
+      [...log].reverse().forEach((entry, i) => {
+        const div = document.createElement("div");
+        div.className = "gratitude-entry";
+        div.innerHTML = `
+    <span>${entry.date} ${entry.time ?? ""}: ${entry.text}</span>
+    <button class="delete-entry" data-i="${log.length - 1 - i}" aria-label="delete">✕</button>`;
+        gratitudeLogContainer.appendChild(div);
+      });
+
+      // one‑time click listener for deletes
+      gratitudeLogContainer.onclick = (e) => {
+        if (!e.target.classList.contains("delete-entry")) return;
+        const idx = Number(e.target.dataset.i);
+        log.splice(idx, 1);
+        chrome.storage.local.set({ gratitudeLog: log }, loadGratitudeLog);
+      };
+    });
+  }
+
+
   // ---------- Background Image and Task List ----------
   const backgroundContainer = document.createElement("div");
   backgroundContainer.className = "background-container";
