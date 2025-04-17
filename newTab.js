@@ -1,4 +1,56 @@
 document.addEventListener("DOMContentLoaded", () => {
+
+  // ---------- Inspirational Quote Overlay ----------
+  const quotes = [
+    "Believe you can and you’re halfway there.",
+    "Small steps every day lead to big results.",
+    "Progress, not perfection.",
+    "You’ve got this!",
+    "Dream it. Plan it. Do it.",
+    "Every day is a fresh start.",
+    "Stay positive, work hard, make it happen.",
+    "Believe in yourself and all that you are.",
+    "You are stronger than you think.",
+    "The best time for new beginnings is now.",
+    "Your only limit is you.",
+    "Do something today that your future self will thank you for.",
+    "Success is not the key to happiness. Happiness is the key to success.",
+    "The future depends on what you do today.",
+    "You are capable of amazing things.",
+    "Success is the sum of small efforts, repeated day in and day out.",
+    "The only way to do great work is to love what you do.",
+    "Your vibe attracts your tribe.",
+    "You are the artist of your own life. Don’t hand the paintbrush to anyone else.",
+    "You are enough just as you are.",
+    "You are braver than you believe, stronger than you seem, and smarter than you think.",
+    "You have the power to create your own happiness.",
+    "You are not a drop in the ocean. You are the entire ocean in a drop.",
+    "Believe in the magic of new beginnings.",
+    "You are the author of your own story.",
+    "Your life is your message to the world. Make it inspiring.",
+    "You are the master of your own destiny.",
+    "You are capable of more than you know.",
+    "You are the architect of your happiness."
+  ];
+
+  function showQuoteOverlay() {
+    // choose a random quote
+    const quote = quotes[Math.floor(Math.random() * quotes.length)];
+
+    // build the overlay if it doesn’t exist
+    let overlay = document.getElementById("quote-overlay");
+    if (!overlay) {
+      overlay = document.createElement("div");
+      overlay.id = "quote-overlay";
+      document.body.appendChild(overlay);
+    }
+    overlay.textContent = quote;
+  }
+  // show the overlay as soon as the page loads
+  showQuoteOverlay();
+
+  
+  // ---------- Background Image and Task List ----------
   const backgroundContainer = document.createElement("div");
   backgroundContainer.className = "background-container";
   document.body.appendChild(backgroundContainer);
@@ -381,7 +433,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (isFinalImage) {
         changeBackgroundWithSlide(
           backgroundSets[selectedCategory][
-            backgroundSets[selectedCategory].length - 1
+          backgroundSets[selectedCategory].length - 1
           ]
         ).then(() => {
           tasksContainer.classList.add("hidden");
@@ -647,13 +699,11 @@ document.addEventListener("DOMContentLoaded", () => {
       taskItem.classList.add("draggable");
       taskItem.innerHTML = `
         <input type="checkbox" ${task.completed ? "checked" : ""} />
-        <div class="task-text" contenteditable="true" placeholder="New task">${
-          task.text
+        <div class="task-text" contenteditable="true" placeholder="New task">${task.text
         }</div>
-        ${
-          task.text && !task.completed
-            ? `<button class="delete-task"></button>`
-            : ""
+        ${task.text && !task.completed
+          ? `<button class="delete-task"></button>`
+          : ""
         }
         <div class="drag-handle">
          <div class="line"></div>
